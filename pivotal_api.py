@@ -18,7 +18,7 @@ project_dict = response_dict['projects'][0]
 print('Getting response...')
 print(response)
 print('\nWALL OF TEXT (Complete response):')
-print(project_dict)
+print(response_dict)
 print('\nGetting user info...')
 print('ID: {}'.format(response_dict['id']))
 print('Project ID: {}'.format(response_dict['name']))
