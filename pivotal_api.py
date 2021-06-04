@@ -2,7 +2,7 @@ import requests
 import json
 
 API_URL = "https://www.pivotaltracker.com/services/v5"
-API_TOKEN = "GENERATE YOUR OWN UNDER www.pivotaltracker.com -> PROFILE"
+API_TOKEN = "2d9139b9d283b9fcc56f347c4c9cb09a"
 print('\n\n..:: PIVOTAL TRACKER API TESTBOT ::..')
 
 #------------------ GET PERSONAL INFO FROM THE ACCOUNT --------------------------------------
@@ -14,7 +14,6 @@ print('\n\n')
 endpoint = "/me"
 response = requests.get("{}{}".format(API_URL, endpoint), headers={'X-TrackerToken':API_TOKEN})
 response_dict = json.loads(response.text)
-project_dict = response_dict['projects'][0]
 print('Getting response...')
 print(response)
 print('\nWALL OF TEXT (Complete response):')
@@ -25,6 +24,7 @@ print('Project ID: {}'.format(response_dict['name']))
 print('Project Name: {}'.format(response_dict['initials']))
 print('Project Color: {}'.format(response_dict['username']))
 
+project_dict = response_dict['projects'][0]
 print('\nGetting user projects...')
 print('Project ID: {}'.format(project_dict['project_id']))
 print('Project Name: {}'.format(project_dict['project_name']))
@@ -50,15 +50,13 @@ post_dict.update({'story_type': 'feature'})
 post_dict.update({'current_state': 'unscheduled'})
 
 print('Payload dict: \n{}'.format(post_dict))
-response = requests.post("{}{}".format(API_URL, endpoint),data=post_dict, headers={'Content-type': 'application/json', 'X-TrackerToken':API_TOKEN})
+response = requests.post("{}{}".format(API_URL, endpoint),data=json.dumps(post_dict), headers={'Content-type': 'application/json', 'X-TrackerToken':API_TOKEN})
 
 print('Getting response...')
 print(response)
-print('\nLOL error code 500, complete log below:')
+print('\nComplete log below:')
 response_dict = json.loads(response.text)
 print(response_dict)
-print("idk let's try somewhere else")
-print('\n\n')
 
 
 #------------------ CREATE A NEW PROJECT --------------------------------------------------------
@@ -75,10 +73,10 @@ post_dict.update({'iteration_length': 2})
 post_dict.update({'week_start_day': 'Monday'})
 
 print('Payload dict: \n{}'.format(post_dict))
-response = requests.post("{}{}".format(API_URL, endpoint),data=post_dict, headers={'Content-type': 'application/json', 'X-TrackerToken':API_TOKEN})
+response = requests.post("{}{}".format(API_URL, endpoint),data=json.dumps(post_dict), headers={'Content-type': 'application/json', 'X-TrackerToken':API_TOKEN})
 
 print('Getting response...')
 print(response)
-print('\n')
+print('\nComplete log below:')
 response_dict = json.loads(response.text)
 print(response_dict)
