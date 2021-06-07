@@ -5,6 +5,10 @@ name = "pypi"
 
 [packages]
 requests = "*"
+json = "*"
+logging = "*"
+pyyaml = "*"
+assertpy = "*"
 
 [dev-packages]
 

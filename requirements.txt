@@ -2,3 +2,4 @@ requests
 json
 logging
 pyyaml
+assertpy

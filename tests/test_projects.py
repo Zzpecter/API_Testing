@@ -6,7 +6,7 @@ from pivotalApi import PivotalApi
 def get_request():
     return requests.get("https://www.pivotaltracker.com/services/v5/projects/")
 
-
+#TODO
 def test_get_all_projects():
     api = PivotalApi()
     assert get_request() == api.run('GET', '/projects')
