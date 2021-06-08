@@ -4,3 +4,6 @@ logging
 pyyaml
 assertpy
 pytest
+flake8
+pylint
+pycodestyle
