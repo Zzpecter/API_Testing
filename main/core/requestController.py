@@ -15,7 +15,7 @@ class RequestController:
         self.URL = self.json_config['API_URL']
         self.HEADER = {'Content-type': self.json_config['CONTENT_TYPE'],
                        self.json_config['API_TOKEN_NAME']: self.json_config['API_TOKEN']}
-        
+
         self.response = None
         self.last_method_used = None
         self.logger = CustomLogger(name='api-logger')
