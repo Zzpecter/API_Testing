@@ -13,7 +13,7 @@ def new_project_data():
             'iteration_length': 2,
             'week_start_day': 'Monday'}
 
-
+#TODO: this should be a resource
 @pytest.fixture
 def update_project_data():
     return {'name': 'Updated Project',

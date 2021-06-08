@@ -3,7 +3,7 @@ from main.core.requestController import RequestController
 
 class StoryEndpoints:
     def __init__(self):
-        self.my_request_controller = RequestController('./main/pivotal/api/resources/config.json')
+        self.my_request_controller = RequestController()
 
     def get_stories(self, project_id):
         return self.my_request_controller.send_request('GET', f"/projects/{project_id}/stories/")

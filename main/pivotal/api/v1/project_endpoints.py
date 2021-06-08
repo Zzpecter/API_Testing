@@ -2,9 +2,8 @@ from main.core.requestController import  RequestController
 
 
 class ProjectEndpoints:
-    def __init__(self, root_dir):
-        conf_dir = f'{root_dir}' + r'\main\pivotal\resources\config.json'
-        self.my_request_controller = RequestController(conf_dir)
+    def __init__(self):
+        self.my_request_controller = RequestController()
 
     def get_projects(self):
         return self.my_request_controller.send_request('GET', f"/projects/")

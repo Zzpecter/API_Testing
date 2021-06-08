@@ -10,9 +10,10 @@ REQUEST_METHODS = ['GET', 'OPTIONS', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE'] #
 
 
 class RequestController:
-    def __init__(self, config_path):
-        self.json_config = read_json(config_path)
+    def __init__(self):
+        self.json_config = read_json(r'main\pivotal\resources\config.json')
         self.URL = self.json_config['API_URL']
+
         self.HEADER = {'Content-type': self.json_config['CONTENT_TYPE'],
                        self.json_config['API_TOKEN_NAME']: self.json_config['API_TOKEN']}
 
@@ -22,6 +23,7 @@ class RequestController:
         self.logger.debug('Logger initialized!')
 
     def send_request(self, request_method, endpoint, payload=None):
+        #TODO: check this in another layer
         if request_method in REQUEST_METHODS:
             self.last_method_used = request_method
             if payload is not None:
