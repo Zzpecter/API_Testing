@@ -3,3 +3,4 @@ json
 logging
 pyyaml
 assertpy
+pytest

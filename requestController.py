@@ -3,23 +3,24 @@ import json
 from utils.fileReader import read_json
 from http import HTTPStatus
 from assertpy import assert_that
-import logging
+from utils.logger import CustomLogger
 
 
-REQUEST_METHODS = ['GET', 'OPTIONS', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE']
+REQUEST_METHODS = ['GET', 'OPTIONS', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE'] # to constants
 
 
 class RequestController:
-    def __init__(self, logger):
+    def __init__(self):
         self.json_config = read_json('./resources/config.json')
         self.URL = self.json_config['API_URL']
         self.TOKEN = self.json_config['API_TOKEN']
         self.HEADER = {'Content-type': 'application/json', 'X-TrackerToken': self.TOKEN}
         self.response = None
         self.last_method_used = None
-        self.logger = logger
+        self.logger = CustomLogger(name='api-logger')
+        self.logger.debug('Logger initialized!')
 
-    def send_request(self, request_method, endpoint, payload):
+    def send_request(self, request_method, endpoint, payload=None):
         if request_method in REQUEST_METHODS:
             self.last_method_used = request_method
             if payload is not None:
@@ -35,7 +36,7 @@ class RequestController:
             self.logger.error('Non-existing method entered!')
 
         try:
-            assert_that(self.response.status_code).is_equal_to(HTTPStatus.OK.value)
+            assert_that(self.response.status_code).is_equal_to(HTTPStatus.OK)
         except AssertionError as e:
             self.logger.warning(f"{e}")
         self.log_response()
@@ -51,7 +52,7 @@ class RequestController:
             aux_string += '.... :::: COMPLETE JSON RESPONSE :::: ....\n'
             self.logger.info(aux_string)
             if self.response.status_code == 200:
-                self.logger.info(json.dumps(self.response.json(), indent = 4, sort_keys=True))
+                self.logger.info(json.dumps(self.response.json(), indent=4, sort_keys=True))
             self.logger.info('\n.... ::::  REPORT COMPLETED :::: ....\n\n ')
         else:
             self.logger.warning('No response available')

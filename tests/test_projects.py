@@ -1,14 +1,18 @@
 import pytest
-import requests
-from pivotalApi import PivotalApi
+import datetime
+from requestController import RequestController
 from http import HTTPStatus
+
+my_request_controller = RequestController()
 
 
 @pytest.fixture
 def new_project_data():
-    return {'name': 'Test Project',
+    time_stamp = str(datetime.datetime.now().timestamp())
+    return {'name': f'test-proj-{time_stamp}',
             'iteration_length': 2,
             'week_start_day': 'Monday'}
+
 
 @pytest.fixture
 def update_project_data():
@@ -16,47 +20,52 @@ def update_project_data():
             'week_start_day': 'Tuesday'}
 
 
-class TestProjects:
+@pytest.fixture
+def fixture_project(new_project_data):
+    response = my_request_controller.send_request('POST', '/projects/', payload=new_project_data).json()
+    new_id = response['id']
+    yield response, new_id
+    my_request_controller.send_request('DELETE', f"/projects/{new_id}")
 
-    def __init__(self):
-        self.api = PivotalApi()
 
-    @pytest.fixture
-    def fixture_project(self, new_project_data):
-        return self.api.run('POST', '/projects/', payload=new_project_data)['id']
+def test_get_all_projects():
+    response = my_request_controller.send_request('GET', '/projects')
+    assert HTTPStatus.OK.value is response.status_code
 
-    def test_get_all_projects(self):
-        response = self.api.run('GET', '/projects')
-        assert response.status_code == HTTPStatus.OK.value
 
-    def test_get_one_project(self):
-        test_id = 2501685
-        response = self.api.run('GET', f'/projects/{test_id}')
+def test_get_one_project(fixture_project):
+    _, test_id = fixture_project
+    response = my_request_controller.send_request('GET', f'/projects/{test_id}')
 
-        assert response.status_code == HTTPStatus.OK.value
-        assert response['id'] == test_id
+    assert HTTPStatus.OK.value is response.status_code
+    assert response.json()['id'] == test_id
 
-    def test_post_new_project(self, new_project_data):
 
-        response = self.api.run('POST', '/projects/', payload=new_project_data)
+def test_post_new_project(new_project_data):
 
-        assert response.status_code == HTTPStatus.OK.value
-        assert response['name'] == new_project_data['name']
-        assert response['iteration_length'] == new_project_data['iteration_length']
-        assert response['week_start_day'] == new_project_data['week_start_day']
+    response = my_request_controller.send_request('POST', '/projects/', payload=new_project_data)
 
-    def test_put_update_project(self, update_project_data, fixture_project):
+    assert HTTPStatus.OK.value is response.status_code
+    assert response.json()['name'] == new_project_data['name']
+    assert response.json()['iteration_length'] == new_project_data['iteration_length']
+    assert response.json()['week_start_day'] == new_project_data['week_start_day']
 
-        response = self.api.run('PUT', f"/projects/{fixture_project['id']}", payload=update_project_data)
 
-        assert response.status_code == HTTPStatus.OK.value
-        assert response['name'] == new_project_data['name']
-        assert response['week_start_day'] == new_project_data['week_start_day']
+def test_put_update_project(update_project_data, fixture_project):
 
-    def test_delete_project(self, fixture_project):
+    _, test_id = fixture_project
+    response = my_request_controller.send_request('PUT', f"/projects/{test_id}", payload=update_project_data)
 
-        response = self.api.run('DELETE', f'/projects/{fixture_project}')
+    assert HTTPStatus.OK.value is response.status_code
+    assert response.json()['name'] == update_project_data['name']
+    assert response.json()['week_start_day'] == update_project_data['week_start_day']
 
-        assert response.status_code == HTTPStatus.NO_CONTENT.value
+
+def test_delete_project(fixture_project):
+
+    _, test_id = fixture_project
+    response = my_request_controller.send_request('DELETE', f'/projects/{test_id}')
+
+    assert HTTPStatus.NO_CONTENT.value is response.status_code
 
 
