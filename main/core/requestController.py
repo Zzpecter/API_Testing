@@ -1,20 +1,21 @@
 import requests
 import json
-from utils.fileReader import read_json
+from main.core.utils.fileReader import read_json
 from http import HTTPStatus
 from assertpy import assert_that
-from utils.logger import CustomLogger
+from main.core.utils.logger import CustomLogger
 
 
 REQUEST_METHODS = ['GET', 'OPTIONS', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE'] # to constants
 
 
 class RequestController:
-    def __init__(self):
-        self.json_config = read_json('./resources/config.json')
+    def __init__(self, config_path):
+        self.json_config = read_json(config_path)
         self.URL = self.json_config['API_URL']
-        self.TOKEN = self.json_config['API_TOKEN']
-        self.HEADER = {'Content-type': 'application/json', 'X-TrackerToken': self.TOKEN}
+        self.HEADER = {'Content-type': self.json_config['CONTENT_TYPE'],
+                       self.json_config['API_TOKEN_NAME']: self.json_config['API_TOKEN']}
+        
         self.response = None
         self.last_method_used = None
         self.logger = CustomLogger(name='api-logger')

@@ -1,7 +1,6 @@
 import logging
 import logging.config
 import datetime
-from utils.fileReader import read_yaml
 
 
 class CustomLogger(logging.Logger):

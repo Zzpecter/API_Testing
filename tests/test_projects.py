@@ -1,6 +1,6 @@
 import pytest
 import datetime
-from requestController import RequestController
+from main.core.requestController import RequestController
 from http import HTTPStatus
 
 my_request_controller = RequestController()
