@@ -1,4 +1,4 @@
-from main.core.requestController import RequestController
+from main.core.request_controller import RequestController
 
 
 class StoryEndpoints:
@@ -6,17 +6,28 @@ class StoryEndpoints:
         self.my_request_controller = RequestController()
 
     def get_stories(self, project_id):
-        return self.my_request_controller.send_request('GET', f"/projects/{project_id}/stories/")
+        return self.my_request_controller.\
+            send_request('GET',
+                         f"/projects/{project_id}/stories/")
 
     def get_story(self, project_id, story_id):
-        return self.my_request_controller.send_request('GET', f"/projects/{project_id}/stories/{story_id}")
+        return self.my_request_controller.\
+            send_request('GET',
+                         f"/projects/{project_id}/stories/{story_id}")
 
     def post_story(self, payload_dict):
-        return self.my_request_controller.send_request('POST', '/projects/{project_id}/stories', payload=payload_dict)
+        return self.my_request_controller.\
+            send_request('POST',
+                         '/projects/{project_id}/stories',
+                         payload=payload_dict)
 
     def put_story(self, project_id, story_id, payload_dict):
-        return self.my_request_controller.send_request('PUT', f'/projects/{project_id}/stories/{story_id}',
-                                                       payload=payload_dict)
+        return self.my_request_controller.\
+            send_request('PUT',
+                         f'/projects/{project_id}/stories/{story_id}',
+                         payload=payload_dict)
 
     def delete_story(self, project_id, story_id):
-        return self.my_request_controller.send_request('DELETE', f'/projects/{project_id}/stories/{story_id}')
+        return self.my_request_controller.\
+            send_request('DELETE',
+                         f'/projects/{project_id}/stories/{story_id}')
