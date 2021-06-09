@@ -17,7 +17,7 @@ Classes:
 Functions:
 
     send_request(request_method, endpoint, payload) -> object
-    log_response() 
+    log_response()
 
 Misc variables:
 
@@ -25,6 +25,7 @@ Misc variables:
     header
     last_method_used
 """
+
 
 class RequestController:
     """
