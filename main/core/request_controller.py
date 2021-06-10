@@ -61,7 +61,7 @@ class RequestController:
                 be used
         """
         self.json_config = read_json(config_path)
-        self.url = self.json_config['API_url']
+        self.url = self.json_config['API_URL']
 
         self.header = {'Content-type': self.json_config['CONTENT_TYPE'],
                        self.json_config['API_TOKEN_NAME']:
@@ -109,7 +109,10 @@ class RequestController:
             self.logger.warning(f"{error}")
 
         self.log_response()
-        return self.response
+        if self.response.status_code is not HTTPStatus.OK.value:
+            return self.response.status_code, {"message": self.response.text}
+        else:
+            return self.response.status_code, self.response.json()
 
     def log_response(self):
         """
