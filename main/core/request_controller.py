@@ -93,7 +93,7 @@ class RequestController:
                 request performed
         """
         self.last_method_used = request_method
-        if payload is not None:
+        if request_method == 'PUT' or request_method == 'POST':
             self.response = requests.request(request_method,
                                              url=f'{self.url}{endpoint}',
                                              data=json.dumps(payload),

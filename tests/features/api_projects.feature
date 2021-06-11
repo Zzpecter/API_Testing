@@ -24,6 +24,12 @@ Feature: Pivotal API Service
       | week_start_day    | Monday              |
     When the "POST" request to "/projects" is sent
     Then the response status code should be 200
+    And the response body should be verified with:
+      | key               | value               |
+      | name              | BDD-Test-Project    |
+      | iteration_length  | 2                   |
+      | week_start_day    | Monday              |
+
 
   @pivotal @service @put_project @fixture_create_projects @fixture_delete_projects
   Scenario: Put Project
@@ -32,10 +38,15 @@ Feature: Pivotal API Service
       | name              | BDD-Update-Project  |
       | iteration_length  | 3                   |
       | week_start_day    | Saturday            |
-    When the "PUT" request to "/projects" is sent
+    When the "PUT" request to "/projects/<id>" is sent
     Then the response status code should be 200
+    And the response body should be verified with:
+      | key               | value               |
+      | name              | BDD-Update-Project  |
+      | iteration_length  | 3                   |
+      | week_start_day    | Saturday            |
 
-  @pivotal @service @del_project
+  @pivotal @service @del_project @fixture_create_projects
   Scenario: Delete Project
-    When the "DELETE" request to "/projects" is sent
+    When the "DELETE" request to "/projects/<id>" is sent
     Then the response status code should be 204

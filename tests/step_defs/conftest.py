@@ -4,10 +4,13 @@ This module contains shared fixtures, steps, and hooks.
 import pytest
 
 from main.core.utils.logger import CustomLogger
+from main.core.utils.fileReader import read_json
 from main.core.request_controller import RequestController
 
 LOGGER = CustomLogger('test_logger')
 REQUEST_CONTROLLER = RequestController()
+
+CACHE_TAGS = ['body', 'id', 'response', 'status_code']
 
 GLOBAL_CONTEXT = None
 SCENARIO_TAGS = None
@@ -42,25 +45,18 @@ def pytest_bdd_before_scenario(request, feature, scenario):  # pylint: disable=W
                         f"{request.config.cache.get('endpoint', None)}")
             endpoint = f"/{tag.split('_')[-1]}"
 
-            # TODO: load from resource file get the endpoint from the tag
-            # define all elements from cache in a dict, loop and set to none
-            payload_dict = {}
-            if endpoint == '/projects':
-                payload_dict = {'name': f'test-project-bdd',
-                                'iteration_length': 2,
-                                'week_start_day': 'Monday'}
+            # TODO: define all elements from cache in a dict, loop and set to
+            #  none
+            payload_dict = read_json(
+                f'./main/pivotal/resources/payload_{endpoint[1:]}.json')
 
             _, response = REQUEST_CONTROLLER.send_request(
                 request_method='POST',
                 endpoint=endpoint,
                 payload=payload_dict)
-            request.config.cache.set('project_id', response['id'])
+            request.config.cache.set(f'{endpoint[1:]}_id', response['id'])
+            CACHE_TAGS.append(f'{endpoint[1:]}_id')
 
-
-
-
-        elif "cache_clear" in tag:
-            request.config.cache.set('project_id', None)
 
 
 def pytest_bdd_step_error(request, feature, scenario, step, step_func, step_func_args, exception):  # noqa:E501  pylint: disable=W0613
@@ -90,6 +86,10 @@ def pytest_bdd_after_scenario(request, feature, scenario):  # pylint: disable=W0
             REQUEST_CONTROLLER.send_request(request_method='DELETE',
                                             endpoint=f"/{tag.split('_')[-1]}/"
                                                      f"{element_id}")
+
+    for tag in CACHE_TAGS:
+        if request.config.cache.get(tag, None) is not None:
+            request.config.cache.set(tag, None)
 
 
 @pytest.fixture()

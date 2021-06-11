@@ -12,7 +12,8 @@ Functions:
 
 """
 
-class RegularExpressionHandler():
+
+class RegularExpressionHandler:
     """
     Regular expression handler is a static class for manipulating strings
     based on RE's
@@ -28,4 +29,6 @@ class RegularExpressionHandler():
         replacement pattern is found
         :return: string: the updated string.
         """
-        return re.sub(pattern, base_string, replace_string)
+        # TODO: why is the RE replacing the whole string?
+        # return re.sub(pattern, base_string, replace_string)
+        return base_string.replace(pattern, replace_string)
