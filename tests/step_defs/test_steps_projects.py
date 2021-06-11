@@ -38,7 +38,7 @@ def step_send_request(http_method, endpoint, request):
     body = request.config.cache.get('body', None)
 
     if '<id>' in endpoint:
-        endpoint = regex.replace_tag('<id>', endpoint, str(new_id))
+        endpoint = regex.replace_tag('<id>', str(new_id), endpoint)
 
     status_code, response = REQUEST_CONTROLLER.send_request(
             request_method=http_method,

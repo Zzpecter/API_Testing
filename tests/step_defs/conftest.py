@@ -56,7 +56,6 @@ def pytest_bdd_before_scenario(request, feature, scenario):  # pylint: disable=W
             CACHE_TAGS.append(f'{endpoint[1:]}_id')
 
 
-
 def pytest_bdd_step_error(request, feature, scenario, step, step_func, step_func_args, exception):  # noqa:E501  pylint: disable=W0613
     """ pytest bdd step error
 
