@@ -29,6 +29,7 @@ Feature: Pivotal API Service
       | name              | BDD-Test-Project    |
       | iteration_length  | 2                   |
       | week_start_day    | Monday              |
+    And the response schema should be verified with "schema_projects.json"
 
 
   @pivotal @service @put_project @fixture_create_projects @fixture_delete_projects

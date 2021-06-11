@@ -45,8 +45,6 @@ def pytest_bdd_before_scenario(request, feature, scenario):  # pylint: disable=W
                         f"{request.config.cache.get('endpoint', None)}")
             endpoint = f"/{tag.split('_')[-1]}"
 
-            # TODO: define all elements from cache in a dict, loop and set to
-            #  none
             payload_dict = read_json(
                 f'./main/pivotal/resources/payload_{endpoint[1:]}.json')
 

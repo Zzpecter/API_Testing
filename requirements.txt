@@ -9,3 +9,4 @@ pylint
 pycodestyle
 pytest_bdd
 sttable
+jsonschema

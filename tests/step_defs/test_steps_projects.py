@@ -6,6 +6,9 @@ import pytest
 from assertpy import assert_that
 from pytest_bdd import scenarios, given, when, then, parsers
 from sttable import parse_str_table
+from main.core.utils.fileReader import read_json
+
+from jsonschema import validate
 
 from main.core.utils.logger import CustomLogger
 from main.core.utils.tableParser import TableParser as table_parser
@@ -101,10 +104,16 @@ def step_verify_response_payload(table, request):  # pylint: disable=W0613
 
 
 @then(parsers.parse('the response schema should be verified with "{json_template}"'))
-def step_verify_response_schema(json_template):  # pylint: disable=W0613
+def step_verify_response_schema(json_template, request):  # pylint:
+    # disable=W0613
     """verify response schema
 
     Args:
         table (datatable)
+        request (string): request fixture object
     """
-    LOGGER.info('Not implemented yet')
+    response = request.config.cache.get('response', None)
+    json_schema = read_json(f'./main/pivotal/resources/{json_template}')
+    validate(response, json_schema)  # if it fails it should raise error
+    # (returns nothing)
+    LOGGER.info('schema validation')
