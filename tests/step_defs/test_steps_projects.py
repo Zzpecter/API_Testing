@@ -16,36 +16,6 @@ REQUEST_CONTROLLER = RequestController()
 scenarios('../features/api_projects.feature')
 
 
-@pytest.fixture
-def new_project_data():
-    time_stamp = str(datetime.datetime.now().timestamp())
-    return {'name': f'test-proj-{time_stamp}',
-            'iteration_length': 2,
-            'week_start_day': 'Monday'}
-
-
-@pytest.fixture
-def fixture_project(new_project_data):
-    _, response = REQUEST_CONTROLLER.\
-        send_request('POST', '/projects/', payload=new_project_data)
-    new_id = response['id']
-    yield response, new_id
-    REQUEST_CONTROLLER.send_request('DELETE', f"/projects/{new_id}")
-
-
-@given(parsers.parse('the project "{project_id}"'))
-def step_set_project_id(request, fixture_project):
-    """set body parameters
-
-    Args:
-        request (request): request fixture object
-        fixture_project (obj): project data
-    """
-    _, project_id = fixture_project
-    request.config.cache.set('project_id', project_id)
-    LOGGER.info(f'PROJECT ID: {request.config.cache.get("project_id", None)}')
-
-
 @given(parsers.parse('the "{http_method}" request to "{endpoint}" is sent'))
 @when(parsers.parse('the "{http_method}" request to "{endpoint}" is sent'))
 def step_send_request(http_method, endpoint, request):
@@ -58,30 +28,12 @@ def step_send_request(http_method, endpoint, request):
     """
     project_id = request.config.cache.get('project_id', None)
     body = request.config.cache.get('body', None)
-    selected_project_id = request.config.cache.get('select_project_id', None)
 
-    if http_method == 'GET':
-        if project_id is not None:
-            endpoint += f'/{project_id}'
-
-        status_code, response = REQUEST_CONTROLLER.send_request(
-            request_method=http_method,
-            endpoint=endpoint)
-
-    elif http_method == 'PUT' :
-        endpoint += f'/{project_id}'
-        status_code, response = REQUEST_CONTROLLER.send_request(
-            request_method=http_method,
-            endpoint=endpoint,
-            payload=body)
-
-    elif http_method == 'DELETE':
-        endpoint += f'/{project_id}'
-        status_code, response = REQUEST_CONTROLLER.send_request(
-            request_method=http_method,
-            endpoint=endpoint)
-    else:
-        status_code, response = REQUEST_CONTROLLER.send_request(
+    # TODO: clear cache after, so payload is none for some requests that
+    #  need it
+    # TODO: If there is a project on cache, add the id to the endpoint (for
+    #  the get/put/delete methods
+    status_code, response = REQUEST_CONTROLLER.send_request(
             request_method=http_method,
             endpoint=endpoint,
             payload=body)
@@ -105,6 +57,7 @@ def step_set_body_parameters(datatable, body, request):
     keys = datatable.body.columns['key']
     values = datatable.body.columns['value']
 
+    # TODO: Move this to a helper class e.g. main/core/utils
     body_dict = {}
     for k, v in zip(keys, values):
         if k == 'iteration_length':

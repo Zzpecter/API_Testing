@@ -42,7 +42,8 @@ def pytest_bdd_before_scenario(request, feature, scenario):  # pylint: disable=W
                         f"{request.config.cache.get('endpoint', None)}")
             endpoint = f"/{tag.split('_')[-1]}"
 
-            # TODO: how to implement a generic payload_dict? fixtures?
+            # TODO: load from resource file get the endpoint from the tag
+            # define all elements from cache in a dict, loop and set to none
             payload_dict = {}
             if endpoint == '/projects':
                 payload_dict = {'name': f'test-project-bdd',
@@ -54,6 +55,9 @@ def pytest_bdd_before_scenario(request, feature, scenario):  # pylint: disable=W
                 endpoint=endpoint,
                 payload=payload_dict)
             request.config.cache.set('project_id', response['id'])
+
+
+
 
         elif "cache_clear" in tag:
             request.config.cache.set('project_id', None)

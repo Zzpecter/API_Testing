@@ -10,10 +10,9 @@ Feature: Pivotal API Service
     Given the "GET" request to "/projects" is sent
     Then the response status code should be 200
 
-  @pivotal @service @get_project
+  @pivotal @service @get_project @fixture_create_projects @fixture_delete_projects
   Scenario: Get Project
-    Given the project "id"
-    When the "GET" request to "/projects" is sent
+    When the "GET" request to "/projects/<id>" is sent
     Then the response status code should be 200
 
   @pivotal @service @post_project @fixture_delete_projects
@@ -32,12 +31,11 @@ Feature: Pivotal API Service
       | key               | value               |
       | name              | BDD-Update-Project  |
       | iteration_length  | 3                   |
-      | week_start_day    | Saturday              |
+      | week_start_day    | Saturday            |
     When the "PUT" request to "/projects" is sent
     Then the response status code should be 200
 
-  @pivotal @service @delete_project
+  @pivotal @service @del_project
   Scenario: Delete Project
-    Given the project "id"
     When the "DELETE" request to "/projects" is sent
     Then the response status code should be 204
