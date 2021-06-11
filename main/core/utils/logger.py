@@ -1,3 +1,20 @@
+"""
+This module lets the dev create a custom logger
+
+Classes:
+
+    CustomLogger
+
+Functions:
+
+    __init__(name) -> object
+    close()
+
+Misc variables:
+
+    name
+    handlers
+"""
 import logging
 import logging.config
 import datetime

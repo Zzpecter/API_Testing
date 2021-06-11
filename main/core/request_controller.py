@@ -1,12 +1,3 @@
-from http import HTTPStatus
-import json
-import requests
-from assertpy import assert_that
-
-from main.core.utils.fileReader import read_json
-from main.core.utils.logger import CustomLogger
-
-
 """
 Create and send HTTP requests implementing this module
 
@@ -25,6 +16,14 @@ Misc variables:
     header
     last_method_used
 """
+
+from http import HTTPStatus
+import json
+import requests
+from assertpy import assert_that
+
+from main.core.utils.file_reader import read_json
+from main.core.utils.logger import CustomLogger
 
 
 class RequestController:
@@ -93,7 +92,7 @@ class RequestController:
                 request performed
         """
         self.last_method_used = request_method
-        if request_method == 'PUT' or request_method == 'POST':
+        if request_method in 'PUT' or request_method in 'POST':
             self.response = requests.request(request_method,
                                              url=f'{self.url}{endpoint}',
                                              data=json.dumps(payload),
@@ -111,8 +110,7 @@ class RequestController:
         self.log_response()
         if self.response.status_code is not HTTPStatus.OK.value:
             return self.response.status_code, {"message": self.response.text}
-        else:
-            return self.response.status_code, self.response.json()
+        return self.response.status_code, self.response.json()
 
     def log_response(self):
         """

@@ -4,7 +4,7 @@ This module contains shared fixtures, steps, and hooks.
 import pytest
 
 from main.core.utils.logger import CustomLogger
-from main.core.utils.fileReader import read_json
+from main.core.utils.file_reader import read_json
 from main.core.request_controller import RequestController
 
 LOGGER = CustomLogger('test_logger')

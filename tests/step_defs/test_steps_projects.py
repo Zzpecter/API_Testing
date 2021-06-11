@@ -6,12 +6,12 @@ import pytest
 from assertpy import assert_that
 from pytest_bdd import scenarios, given, when, then, parsers
 from sttable import parse_str_table
-from main.core.utils.fileReader import read_json
+from main.core.utils.file_reader import read_json
 
 from jsonschema import validate
 
 from main.core.utils.logger import CustomLogger
-from main.core.utils.tableParser import TableParser as table_parser
+from main.core.utils.table_parser import TableParser as table_parser
 from main.core.utils.regex import RegularExpressionHandler as regex
 from main.core.request_controller import RequestController
 

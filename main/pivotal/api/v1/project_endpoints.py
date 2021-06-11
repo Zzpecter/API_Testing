@@ -1,6 +1,3 @@
-from main.core.request_controller import RequestController
-
-
 """
 Send HTTP requests to the Project Endpoints of the Pivotal API
 
@@ -20,6 +17,8 @@ Misc variables:
 
     my_request_controller
 """
+from main.core.request_controller import RequestController
+
 my_request_controller = RequestController()
 
 
@@ -28,12 +27,6 @@ class ProjectEndpoints:
     Static lass for implementing the endpoints of pivotal projects
 
     ...
-
-    Attributes
-    ----------
-    config_path : str
-        the application-based path to the configuration to be loaded to
-        the RequestController
 
     Methods
     -------
