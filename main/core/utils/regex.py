@@ -19,7 +19,7 @@ class RegularExpressionHandler:
     based on RE's
     """
     @staticmethod
-    def replace_tag(pattern, base_string, replace_string):
+    def replace_tag(pattern, replace_string, base_string):
         """
 
         :param pattern: the pattern that is going to be replaced from the
@@ -29,6 +29,5 @@ class RegularExpressionHandler:
         replacement pattern is found
         :return: string: the updated string.
         """
-        # TODO: why is the RE replacing the whole string?
-        # return re.sub(pattern, base_string, replace_string)
-        return base_string.replace(pattern, replace_string)
+        return re.sub(pattern, replace_string, base_string)
+        # return base_string.replace(pattern, replace_string)
