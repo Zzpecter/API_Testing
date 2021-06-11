@@ -98,8 +98,6 @@ def step_verify_response_payload(table, request):  # pylint: disable=W0613
         parse_to_dict(keys=datatable.columns['key'],
                       values=datatable.columns['value'])
 
-    LOGGER.info(f'zzpecter table parse: {body_dict}')
-    LOGGER.info(f'zzpecter response: {response}')
     assert_that(body_dict.items() <= response.items()).is_equal_to(True)
 
 
