@@ -16,7 +16,7 @@ CACHE_TAGS = ['body', 'id', 'response', 'status_code']
 ENDPOINT_DEPENDENCIES = {
     "projects": None,
     "stories": "projects",
-    "epic": "projects",
+    "epics": "projects",
     "releases": "projects",
     "iteration": "projects",
     "tasks": ["projects", "stories"],
@@ -67,6 +67,9 @@ def pytest_bdd_before_scenario(request, feature, scenario):
                     request_method='POST',
                     endpoint=f'/{endpoint_dependencies}',
                     payload=payload_dict)
+                if endpoint_dependencies == "projects":
+                    request.config.cache.set(f'project_id', response['id'])
+                    CACHE_TAGS.append(f'project_id')
                 request.config.cache.set(f'{endpoint_dependencies}_id',
                                          response['id'])
                 CACHE_TAGS.append(f'{endpoint_dependencies}_id')
@@ -81,6 +84,9 @@ def pytest_bdd_before_scenario(request, feature, scenario):
                         request_method='POST',
                         endpoint=f'/{endpoint_required}',
                         payload=payload_dict)
+                    if endpoint_required == "projects":
+                        request.config.cache.set(f'project_id', response['id'])
+                        CACHE_TAGS.append(f'project_id')
                     request.config.cache.set(f'{endpoint_required}_id',
                                              response['id'])
                     CACHE_TAGS.append(f'{endpoint_required}_id')
@@ -122,10 +128,17 @@ def pytest_bdd_after_scenario(request, feature, scenario):
 
     for tag in scenario.tags:
         if "delete" in tag:
-            element_id = request.config.cache.get('response', None)['id']
-            REQUEST_CONTROLLER.send_request(request_method='DELETE',
-                                            endpoint=f"/{tag.split('_')[-1]}/"
-                                                     f"{element_id}")
+            if "projects" in tag:
+                project_id = request.config.cache.get(f'project_id', None)
+                REQUEST_CONTROLLER.send_request(request_method='DELETE',
+                                                endpoint=f"/{tag.split('_')[-1]}/"
+                                                         f"{project_id}")
+            else:
+                LOGGER.info(f'{request.config.cache.get("response", None)}')
+                element_id = request.config.cache.get('response', None)['id']
+                REQUEST_CONTROLLER.send_request(request_method='DELETE',
+                                                endpoint=f"/{tag.split('_')[-1]}/"
+                                                         f"{element_id}")
 
     for tag in CACHE_TAGS:
         if request.config.cache.get(tag, None) is not None:
