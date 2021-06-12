@@ -2,8 +2,6 @@
 This module contains shared fixtures, steps, and hooks.
 """
 import pytest
-
-from main.core.utils.regex import RegularExpressionHandler as regex
 from main.core.utils.logger import CustomLogger
 from main.core.utils.file_reader import read_json
 from main.core.request_controller import RequestController
@@ -42,12 +40,11 @@ def setup(request):
     request.addfinalizer(pytest_bdd_after_all)
 
 
-def pytest_bdd_before_scenario(request, feature, scenario):
+def pytest_bdd_before_scenario(request, scenario):
     """ pytest bdd before scenario
 
     Args:
         request (object): request object of fixture
-        feature (object): feature object of pytest bdd
         scenario (object): scenario object of pytest bdd
     """
     LOGGER.info(f"=============STARTED SCENARIO {scenario.name}")
@@ -68,8 +65,8 @@ def pytest_bdd_before_scenario(request, feature, scenario):
                     endpoint=f'/{endpoint_dependencies}',
                     payload=payload_dict)
                 if endpoint_dependencies == "projects":
-                    request.config.cache.set(f'project_id', response['id'])
-                    CACHE_TAGS.append(f'project_id')
+                    request.config.cache.set('project_id', response['id'])
+                    CACHE_TAGS.append('project_id')
                 request.config.cache.set(f'{endpoint_dependencies}_id',
                                          response['id'])
                 CACHE_TAGS.append(f'{endpoint_dependencies}_id')
@@ -85,8 +82,8 @@ def pytest_bdd_before_scenario(request, feature, scenario):
                         endpoint=f'/{endpoint_required}',
                         payload=payload_dict)
                     if endpoint_required == "projects":
-                        request.config.cache.set(f'project_id', response['id'])
-                        CACHE_TAGS.append(f'project_id')
+                        request.config.cache.set('project_id', response['id'])
+                        CACHE_TAGS.append('project_id')
                     request.config.cache.set(f'{endpoint_required}_id',
                                              response['id'])
                     CACHE_TAGS.append(f'{endpoint_required}_id')
@@ -114,12 +111,11 @@ def pytest_bdd_step_error(step):  # noqa:E501  pylint: disable=W0613
     LOGGER.debug(f'=============FAILED STEP: {step}')
 
 
-def pytest_bdd_after_scenario(request, feature, scenario):
+def pytest_bdd_after_scenario(request, scenario):
     """ pytest bdd after scenario
 
     Args:
         request (object): request object of fixture
-        feature (object): feature object of pytest bdd
         scenario (object): scenario object of pytest bdd
     """
     LOGGER.info(
@@ -128,17 +124,18 @@ def pytest_bdd_after_scenario(request, feature, scenario):
 
     for tag in scenario.tags:
         if "delete" in tag:
-            if "projects" in tag:
-                project_id = request.config.cache.get(f'project_id', None)
+            project_id = request.config.cache.get('projects_id', None)
+            if project_id is not None:
+                LOGGER.info(f'{request.config.cache.get("response", None)}')
+                endpoint = f"/{tag.split('_')[-1]}/{project_id}"
                 REQUEST_CONTROLLER.send_request(request_method='DELETE',
-                                                endpoint=f"/{tag.split('_')[-1]}/"
-                                                         f"{project_id}")
+                                                endpoint=endpoint)
             else:
                 LOGGER.info(f'{request.config.cache.get("response", None)}')
                 element_id = request.config.cache.get('response', None)['id']
+                endpoint = f"/{tag.split('_')[-1]}/{element_id}"
                 REQUEST_CONTROLLER.send_request(request_method='DELETE',
-                                                endpoint=f"/{tag.split('_')[-1]}/"
-                                                         f"{element_id}")
+                                                endpoint=endpoint)
 
     for tag in CACHE_TAGS:
         if request.config.cache.get(tag, None) is not None:

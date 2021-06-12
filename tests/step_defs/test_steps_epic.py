@@ -3,15 +3,13 @@ This module contains step definitions for boards_api.feature.
 It uses the requests package:
 http://docs.python-requests.org/
 """
-import json
 import re
 from assertpy import assert_that
 from pytest_bdd import scenarios, given, when, then, parsers
 from sttable import parse_str_table
 from main.core.utils.logger import CustomLogger
 from main.core.request_controller import RequestController
-from main.core.utils.regex import RegularExpressionHandler as regex
-from tests.step_defs.conftest import CACHE_TAGS
+from main.core.utils.regex import RegularExpressionHandler as Regex
 
 LOGGER = CustomLogger(name='api-logger')
 my_request_controller = RequestController()
@@ -52,15 +50,22 @@ def step_send_request(http_method, endpoint, request):
     endpoint_name = re.findall(r"<(\w+)>", endpoint)
     body = request.config.cache.get('body', None)
     if body is None:
-        for x in endpoint_name:
-            endpoint = regex.replace_tag(f'<{x}>', endpoint, str(request.config.cache.get(x, None)))
-        status_code, response = my_request_controller.send_request(http_method, endpoint)
+        for replace_item in endpoint_name:
+            tag_value = str(request.config.cache.get(replace_item, None))
+            endpoint = Regex.replace_tag(f'<{replace_item}>',
+                                         endpoint, tag_value)
+        status_code, response = my_request_controller.send_request(http_method,
+                                                                   endpoint)
         request.config.cache.set('response', response)
 
     else:
-        for x in endpoint_name:
-            endpoint = regex.replace_tag(f'<{x}>', endpoint, str(request.config.cache.get(x, None)))
-        status_code, response = my_request_controller.send_request(http_method, endpoint, body[0])
+        for replace_item in endpoint_name:
+            tag_value = str(request.config.cache.get(replace_item, None))
+            endpoint = Regex.replace_tag(f'<{replace_item}>',
+                                         endpoint, tag_value)
+        status_code, response = my_request_controller.send_request(http_method,
+                                                                   endpoint,
+                                                                   body[0])
         request.config.cache.set('response', response)
     request.config.cache.set('status_code', str(status_code))
 
