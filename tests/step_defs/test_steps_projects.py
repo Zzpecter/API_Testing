@@ -1,15 +1,12 @@
 """
-This module contains step definitions for api_projects.feature.
+This module contains step definitions for pivotal_projects.feature.
 """
-import datetime
-import pytest
 from assertpy import assert_that
 from pytest_bdd import scenarios, given, when, then, parsers
 from sttable import parse_str_table
-from main.core.utils.file_reader import read_json
-
 from jsonschema import validate
 
+from main.core.utils.file_reader import read_json
 from main.core.utils.logger import CustomLogger
 from main.core.utils.table_parser import TableParser as table_parser
 from main.core.utils.regex import RegularExpressionHandler as regex
@@ -18,7 +15,7 @@ from main.core.request_controller import RequestController
 LOGGER = CustomLogger('test_logger')
 REQUEST_CONTROLLER = RequestController()
 
-scenarios('../features/api_projects.feature')
+scenarios('../features/pivotal_projects.feature')
 
 
 @given(parsers.parse('the "{http_method}" request to "{endpoint}" is sent'))
@@ -38,12 +35,12 @@ def step_send_request(http_method, endpoint, request):
     body = request.config.cache.get('body', None)
 
     if '<id>' in endpoint:
-        endpoint = regex.replace_tag('<id>', str(new_id), endpoint)
+        endpoint = regex.replace_tag('<id>', endpoint, str(new_id))
 
     status_code, response = REQUEST_CONTROLLER.send_request(
-            request_method=http_method,
-            endpoint=endpoint,
-            payload=body)
+        request_method=http_method,
+        endpoint=endpoint,
+        payload=body)
 
     LOGGER.info(f'RESPONSE  {response}')
     request.config.cache.set('status_code', status_code)
@@ -61,7 +58,7 @@ def step_set_body_parameters(datatable, body, request):
     """
     datatable.body = parse_str_table(body)
 
-    body_dict = table_parser.\
+    body_dict = table_parser. \
         parse_to_dict(keys=datatable.body.columns['key'],
                       values=datatable.body.columns['value'])
 
@@ -101,7 +98,8 @@ def step_verify_response_payload(table, request):  # pylint: disable=W0613
     assert_that(body_dict.items() <= response.items()).is_equal_to(True)
 
 
-@then(parsers.parse('the response schema should be verified with "{json_template}"'))
+@then(parsers.
+      parse('the response schema should be verified with "{''json_template}"'))
 def step_verify_response_schema(json_template, request):  # pylint:
     # disable=W0613
     """verify response schema
